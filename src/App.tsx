@@ -117,7 +117,7 @@ export default function App() {
               onChange={(e) => setCurrentSource(e.target.value)}
             >
               {sources.map((source) => (
-                <SelectItem key={source.value} value={source.value}>
+                <SelectItem key={source.value}>
                   {source.label}
                 </SelectItem>
               ))}
