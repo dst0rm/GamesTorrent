@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Список игр</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1 id="title">Список игр (<span id="gameCount">0</span>)</h1>
+
+  <label for="sourceSelect">Выбрать источник:</label>
+  <select id="sourceSelect">
+    <option value="https://hydralinks.cloud/sources/gog.json">GOG</option>
+    <option value="https://hydralinks.cloud/sources/repack-games.json">Repack-Games</option>
+    <option value="https://hydralinks.cloud/sources/atop-games.json">Atop-Games</option>
+    <option value="https://hydralinks.cloud/sources/steamrip.json">SteamRip</option>
+    <option value="https://hydralinks.cloud/sources/dodi.json">DODI</option>
+    <option value="https://hydralinks.cloud/sources/empress.json">Empress</option>
+    <option value="https://hydralinks.cloud/sources/fitgirl.json">FitGirl</option>
+    <option value="https://hydralinks.cloud/sources/kaoskrew.json">Kaoskrew</option>
+    <option value="https://hydralinks.cloud/sources/onlinefix.json">OnlineFix</option>
+    <option value="https://hydralinks.cloud/sources/tinyrepacks.json">TinyRepacks</option>
+    <option value="https://hydralinks.cloud/sources/xatab.json">Xatab</option>
+  </select>
+
+  <input type="text" id="search" placeholder="Поиск игр...">
+
+  <div id="tableWrapper">
+    <table id="gameTable" border="1">
+      <thead>
+        <tr>
+          <th>Название</th>
+          <th>Размер</th>
+          <th>Дата загрузки</th>
+          <th>Скачать</th>
+        </tr>
+      </thead>
+      <tbody id="gameList">
+        <!-- Игры будут сюда -->
+      </tbody>
+    </table>
+  </div>
+
+  <div id="gameDetails" style="display:none;">
+    <button id="backButton">Назад к списку</button>
+    <h2 id="gameTitle"></h2>
+    <p id="gameSize"></p>
+    <p id="gameDate"></p>
+    <a id="downloadLink" href="" target="_blank">Скачать</a>
+  </div>
+
+  <script>
+    let games = [];
+    let currentSource = 'https://hydralinks.cloud/sources/gog.json';
+
+    async function loadGames(source) {
+      try {
+        const res = await fetch(source);
+        const data = await res.json();
+        games = data.downloads || [];
+        renderGames(games);
+        updateGameCount(games.length);
+      } catch (error) {
+        console.error('Ошибка загрузки игр:', error);
+        games = [];
+        renderGames(games);
+        updateGameCount(0);
+      }
+    }
+
+    function getLinkType(link) {
+      if (link.startsWith('magnet:')) {
+        return 'Magnet-ссылка';
+      } else {
+        try {
+          const url = new URL(link);
+          return url.hostname.replace('www.', '');
+        } catch {
+          return 'Ссылка';
+        }
+      }
+    }
+
+    function renderGames(list) {
+      const gameList = document.getElementById('gameList');
+      gameList.innerHTML = '';
+      list.forEach((game, index) => {
+        const rawLink = game.uris ? game.uris[0].replace(/&#038;/g, '&') : '#';
+        const link = decodeURIComponent(rawLink);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><a href="#" onclick="showGame(${index})">${game.title}</a></td>
+          <td>${game.fileSize || 'Не указано'}</td>
+          <td>${game.uploadDate ? new Date(game.uploadDate).toLocaleDateString() : 'Не указано'}</td>
+          <td><a href="${link}" target="_blank">Скачать</a></td>
+        `;
+        gameList.appendChild(tr);
+      });
+    }
+
+    function showGame(index) {
+      const game = games[index];
+      const rawLink = game.uris ? game.uris[0].replace(/&#038;/g, '&') : '#';
+      const link = decodeURIComponent(rawLink);
+      const linkType = getLinkType(link);
+
+      document.getElementById('gameTitle').textContent = game.title;
+      document.getElementById('gameSize').textContent = `Размер файла: ${game.fileSize || 'Не указано'}`;
+      document.getElementById('gameDate').textContent = `Дата загрузки: ${game.uploadDate ? new Date(game.uploadDate).toLocaleDateString() : 'Не указано'}`;
+
+      const downloadLink = document.getElementById('downloadLink');
+      downloadLink.href = link;
+      downloadLink.textContent = `Скачать - ${linkType}`;
+
+      document.getElementById('tableWrapper').style.display = 'none';
+      document.getElementById('search').style.display = 'none';
+      document.getElementById('sourceSelect').style.display = 'none';
+      document.getElementById('gameDetails').style.display = 'block';
+    }
+
+    function updateGameCount(count) {
+      document.getElementById('gameCount').textContent = count;
+    }
+
+    document.getElementById('search').addEventListener('input', function(e) {
+      const value = e.target.value.toLowerCase();
+      const filtered = games.filter(game => game.title.toLowerCase().includes(value));
+      renderGames(filtered);
+      updateGameCount(filtered.length);
+    });
+
+    document.getElementById('backButton').addEventListener('click', function() {
+      document.getElementById('gameDetails').style.display = 'none';
+      document.getElementById('tableWrapper').style.display = 'block';
+      document.getElementById('search').style.display = 'block';
+      document.getElementById('sourceSelect').style.display = 'inline-block';
+    });
+
+    document.getElementById('sourceSelect').addEventListener('change', function(e) {
+      currentSource = e.target.value;
+      loadGames(currentSource);
+    });
+
+    loadGames(currentSource);
+  </script>
+</body>
+</html>
