@@ -83,7 +83,7 @@ export const GameTable: React.FC<GameTableProps> = ({ games, onGameSelect }) => 
         <TableColumn>{t("title")}</TableColumn>
         <TableColumn>{t("size")}</TableColumn>
         <TableColumn>{t("uploadDate")}</TableColumn>
-        <TableColumn className="text-right">{t("actions")}</TableColumn>
+        <TableColumn className="text-right">{t("actions")}</TableColumn> 
       </TableHeader>
       <TableBody emptyContent={t("noGamesFound")}>
         {games.map((game, index) => (

@@ -95,22 +95,35 @@ export default function App() {
         </NavbarContent>
       </Navbar>
 
-      <div className="container mx-auto px-4">
+      <div className="container max-w-screen-xl mx-auto px-4">
         <Card className="p-4 mb-6">
-          <div className="text-small text-default-500 mb-2">
+          {/* <div className="text-small text-default-500 mb-2">
             {t("totalGames")}: {filteredGames.length}
-          </div>
+          </div> */}
           
           <div className="flex flex-col md:flex-row gap-4 mb-4">
             <Input
+              size="lg"
+              radius="md"
               placeholder={t("searchGames")}
               value={searchQuery}
               onValueChange={setSearchQuery}
               startContent={<Icon icon="lucide:search" className="text-default-400" />}
               className="flex-grow"
+              endContent={
+                <div className="pointer-events-none flex items-center">
+                  <span className="text-default-400 text-small whitespace-nowrap mr-2">
+                    {t("totalGames")}: {filteredGames.length}
+                  </span>
+                </div>
+              }
+                          
+              // description={${t("totalGames")}: ${filteredGames.length}}
             />
             
             <Select
+              size="sm"
+              radius="md"
               label={t("selectSource")}
               selectedKeys={[currentSource]}
               className="md:max-w-xs"

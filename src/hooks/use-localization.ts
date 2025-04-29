@@ -26,7 +26,7 @@ const translations = {
     gameList: "GamesTorrent",
     totalGames: "Всего игр",
     searchGames: "Поиск игр...",
-    selectSource: "Выбрать источник",
+    selectSource: "Источник:",
     loading: "Загрузка...",
     title: "Название",
     size: "Размер",
