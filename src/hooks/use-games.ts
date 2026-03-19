@@ -5,7 +5,7 @@ export const useGames = () => {
   const [games, setGames] = React.useState<Game[]>([]);
   const [filteredGames, setFilteredGames] = React.useState<Game[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [currentSource, setCurrentSource] = React.useState('https://hydralinks.cloud/sources/gog.json');
+  const [currentSource, setCurrentSource] = React.useState('https://raw.githubusercontent.com/dst0rm/GamesTorrent/refs/heads/main/gog.json');
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedGame, setSelectedGame] = React.useState<Game | null>(null);
   const [currentPage, setCurrentPage] = React.useState(1);
